@@ -21,9 +21,8 @@ from weblate.utils.stats import ProjectLanguage
 from weblate.utils.views import parse_path, show_form_errors, try_set_language
 
 
-def widgets_sorter(widget, sort_by):
-    if sort_by == 'percentage':
-        return -WIDGETS[widget].translated_percent  # Assuming higher percentage should come first
+def widgets_sorter(widget):
+    """Provide better ordering of widgets."""
     return WIDGETS[widget].order
 
 
@@ -61,10 +60,8 @@ def widgets(request, path: list[str]):
     widget_base_url = get_site_url(
         reverse("widgets", kwargs={"path": project.get_url_path()})
     )
-    sort_by = request.GET.get('sort_by', 'alphabetical')
-
     widget_list = []
-    for widget_name in sorted(WIDGETS, key=lambda x: widgets_sorter(x, sort_by)):
+    for widget_name in sorted(WIDGETS, key=widgets_sorter):
         widget_class = WIDGETS[widget_name]
         color_list = []
         for color in widget_class.colors:
